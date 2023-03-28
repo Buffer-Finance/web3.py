@@ -13,6 +13,8 @@ from typing import (
 )
 import warnings
 
+import diskcache
+
 from eth_typing import (
     Address,
     BlockNumber,
@@ -88,6 +90,8 @@ from web3.types import (
 from web3.utils import (
     handle_offchain_lookup,
 )
+
+disk_cache = diskcache.Cache("web3py_cache")
 
 if TYPE_CHECKING:
     from web3 import Web3  # noqa: F401
@@ -412,6 +416,7 @@ class Eth(BaseEth):
         ]
     ] = Method(RPC.eth_getCode, mungers=[BaseEth.block_id_munger])
 
+    @disk_cache.memoize(expire=None)
     def get_code(
         self,
         account: Union[Address, ChecksumAddress, ENS],
